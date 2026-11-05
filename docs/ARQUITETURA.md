@@ -1,5 +1,7 @@
 # Arquitetura Oficial — Ilumina Coruripe
 
+> **Estado da conexão:** o pool da infraestrutura usa MySQL; o monólito e suas camadas foram preservados. Esta entrega cobre apenas a conexão. As consultas e o esquema PostgreSQL descritos abaixo ainda precisam de adaptação ao modelo do grupo. Consulte [Conexão local com MySQL](06-CONEXAO-MYSQL.md).
+
 > **Novo no projeto?** Comece pelo [**Guia de Desenvolvimento para Iniciantes (`docs/05-GUIA-PARA-INICIANTES.md`)**](05-GUIA-PARA-INICIANTES.md), que explica passo a passo como o sistema funciona com exemplos práticos.
 >
 > **Série detalhada de referência:**

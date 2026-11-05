@@ -1,5 +1,7 @@
 # Guia de Desenvolvimento para Iniciantes — Ilumina Coruripe
 
+> **Conexão MySQL:** a camada de infraestrutura agora permite configurar e testar o acesso ao MySQL local. Veja [Conexão local com MySQL](06-CONEXAO-MYSQL.md). As explicações abaixo sobre SQL e tabelas PostgreSQL descrevem a implementação anterior; a migração dessas consultas e a criação de tabelas não fazem parte desta etapa.
+
 > **Para quem é este guia?**
 > Se você está começando na programação ou chegando agora no projeto **Ilumina Coruripe**, este documento explica **do zero**, sem jargões complicados, como o sistema funciona, por que organizamos as pastas desse jeito e como acompanhar o caminho de cada funcionalidade no código.
 
@@ -152,6 +154,7 @@ Esse `FOR UPDATE` coloca um "cadeado temporário" na linha daquele chamado:
 ### 1. Rodar os testes automatizados (Garantia de Qualidade / QA)
 Para verificar se todas as camadas, regras de domínio, transações e limites de segurança estão funcionando:
 ```bash
+npm install --prefix server  # na primeira execução após clonar/atualizar
 npm test
 ```
 O Node.js vai executar os testes dentro de [`server/tests/`](../server/tests/) em menos de 1 segundo e mostrar um `✔` verde para cada regra validada!

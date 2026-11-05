@@ -3,6 +3,8 @@
  * Registra as rotas REST da camada de Apresentação e o middleware global de erros.
  */
 
+require('./infrastructure/config/env');
+
 const http = require('node:http');
 const { URL } = require('node:url');
 const registrarRotasChamados = require('./presentation/routes/chamados.routes');

@@ -8,6 +8,7 @@
     "dev": "npm run build && npx --yes serve public -l 3000",
     "start": "npm run dev",
     "start:server": "node server/src/app.js",
+    "db:check": "npm --prefix server run db:check",
     "test": "node --test server/tests/*.test.js"
   },
   "engines": { "node": ">=18" }
