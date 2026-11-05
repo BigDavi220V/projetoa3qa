@@ -4,6 +4,7 @@ Thumbs.db
 .netlify/
 .vercel/
 *.log
+uploads/
 
 # Segredos e config local — nunca versionar
 .env
@@ -13,3 +14,4 @@ Thumbs.db
 # Gerado por scripts/build-config.mjs a partir do ambiente.
 # Clone novo: rode `npm run build` antes de servir.
 public/shared/config.js
+public/shared/infrastructure/config.js

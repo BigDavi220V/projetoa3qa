@@ -1,10 +1,29 @@
 // ILUMINA CORURIPE TÉCNICO — Service Worker
-const CACHE_NAME = 'ilumina-tec-v15-monorepo-2026-09-17';
+const CACHE_NAME = 'ilumina-tec-v16-camadas-2026-11-04';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
   '../shared/config.js',
+  '../shared/infrastructure/config.js',
+  '../shared/infrastructure/idb.js',
+  '../shared/infrastructure/ApiClient.js',
+  './js/main.js',
+  './js/domain/Ticket.js',
+  './js/domain/Close.js',
+  './js/domain/Attempt.js',
+  './js/domain/StockItem.js',
+  './js/infrastructure/TicketCache.js',
+  './js/infrastructure/CloseQueue.js',
+  './js/infrastructure/PhotoCache.js',
+  './js/application/FecharChamado.js',
+  './js/application/SincronizarBaixas.js',
+  './js/application/CarregarRota.js',
+  './js/presentation/ListView.js',
+  './js/presentation/MapView.js',
+  './js/presentation/CloseFormView.js',
+  './js/presentation/StockView.js',
+  './js/presentation/Controllers.js',
   './logo.png',
   './icon-192.png',
   './icon-512.png',
@@ -15,9 +34,6 @@ const APP_SHELL = [
   './leaflet.js',
   './jsQR.js'
 ];
-// Os marcadores do Leaflet não entram aqui: o app usa L.divIcon (CSS puro),
-// então ./images/marker-*.png nunca existiram — e o 404 derrubava o addAll
-// inteiro, deixando o app sem shell offline.
 
 async function precache() {
   const cache = await caches.open(CACHE_NAME);
@@ -39,6 +55,7 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/api/')) return;
   if (url.hostname === 'script.google.com') return;
   if (req.mode === 'navigate') {
     event.respondWith(fetch(req).catch(() => caches.match('./index.html')));
