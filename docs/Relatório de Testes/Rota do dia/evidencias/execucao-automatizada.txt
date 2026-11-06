@@ -1,0 +1,14 @@
+Comando: node --test server/tests/rota-do-dia/rota.test.js
+
+✔ Rota: agrupa chamados a até 80 m e ordena as paradas a partir do GPS informado (32.1988ms)
+✔ Rota: exclui fechados, cancelados, GPS ausente, zero e coordenadas fora dos limites (7.9488ms)
+✔ Rota: não inventa origem e aceita lista vazia com origem válida (0.582ms)
+✔ Maps: divide a rota para navegadores móveis sem perder paradas e encadeia as origens (0.6527ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 588.6809

@@ -12,6 +12,17 @@ export class ListView {
     return this.doc ? this.doc.getElementById(id) : null;
   }
 
+  prepararRegistros(registros) {
+    return registros.map(registro => ({
+      ...registro,
+      status: ['aberto', 'em_atendimento'].includes(registro.status) ? 'Aguardando atendimento'
+        : registro.status === 'fechado' ? 'Concluído' : registro.status,
+      data: registro.criadoEm ? new Date(registro.criadoEm).toLocaleString('pt-BR') : '',
+      foto_thumb: registro.fotoUrl || '',
+      foto: registro.fotoUrl || ''
+    }));
+  }
+
   atualizarEstatisticas({ total = '—', atendidos = '—', abertos = '—' } = {}) {
     if (this.$('stat-total')) this.$('stat-total').textContent = total;
     if (this.$('stat-done')) this.$('stat-done').textContent = atendidos;

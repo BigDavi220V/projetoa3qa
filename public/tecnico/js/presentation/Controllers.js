@@ -6,6 +6,9 @@
 import { fecharChamado } from '../application/FecharChamado.js';
 import { sincronizarBaixas } from '../application/SincronizarBaixas.js';
 import { gerarRotaOtimizada } from '../application/CarregarRota.js';
+import { criarFechamentoAdministrativo } from '../domain/AdminClose.js';
+import { fecharAdministrativamente } from '../application/FecharAdministrativamente.js';
+import { autenticarPainel, carregarPainel } from '../application/CarregarPainel.js';
 
 export class TechnicalControllers {
   constructor({ listView, closeFormView, stockView, ticketCache, closeQueue, photoCache, api }) {
@@ -35,5 +38,22 @@ export class TechnicalControllers {
 
   calcularRotaDoDia(chamados, pontoPartida) {
     return gerarRotaOtimizada(chamados, pontoPartida);
+  }
+
+  autenticar(pin) {
+    return autenticarPainel(pin, { api: this.api });
+  }
+
+  async carregarChamados(token) {
+    const dados = await carregarPainel(token, { api: this.api });
+    return { ...dados, records: this.listView.prepararRegistros(dados.records) };
+  }
+
+  iniciarFechamentoAdministrativo() {
+    return criarFechamentoAdministrativo().operacao_id;
+  }
+
+  fecharAdministrativamente(dados, token) {
+    return fecharAdministrativamente(dados, { api: this.api, token });
   }
 }

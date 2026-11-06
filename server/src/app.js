@@ -113,9 +113,16 @@ function criarApp() {
 
     const match = rota.regex.exec(pathname);
     req.params = {};
-    rota.nomesParams.forEach((nome, idx) => {
-      req.params[nome] = decodeURIComponent(match[idx + 1]);
-    });
+    try {
+      rota.nomesParams.forEach((nome, idx) => {
+        req.params[nome] = decodeURIComponent(match[idx + 1]);
+      });
+    } catch (_) {
+      const err = new Error('Parâmetro de rota com codificação inválida.');
+      err.status = 400;
+      err.codigo = 'PARAMETRO_INVALIDO';
+      return tratarErros(err, req, res);
+    }
 
     // Executa cadeia de middlewares -> controller
     let idx = 0;

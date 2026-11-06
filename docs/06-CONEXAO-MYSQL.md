@@ -39,6 +39,6 @@ Esta etapa configura somente a conexão entre a API Node.js e um servidor MySQL 
 
 ## Limite desta entrega
 
-Conexão confirmada não significa que os fluxos de chamados, estoque e autenticação foram migrados. Os repositórios e `server/database/migrations/001_inicial.sql` ainda contêm SQL de PostgreSQL (`$1`, `RETURNING`, `ON CONFLICT`, entre outros). Não execute essa migration no MySQL. A adaptação das consultas ao modelo do grupo e a troca das chamadas legadas do Google Apps Script são etapas posteriores.
+Conexão confirmada não significa que toda a aplicação foi migrada. A entrega seguinte implementa os [itens 4 e 6](07-SPRINT2-ROTA-E-FECHAMENTO-ADMINISTRATIVO.md), liga seus fluxos à API e adapta os repositórios de chamados, fechamentos, usuários e sessões ao MySQL. O esquema ainda precisa ser alinhado ao DER do grupo e preparado; nenhuma tabela foi criada. Outros repositórios e `server/database/migrations/001_inicial.sql` ainda contêm SQL de PostgreSQL (`$1`, `RETURNING`, `ON CONFLICT`, entre outros). Não execute essa migration no MySQL.
 
 O arquivo `.mwb.zip` é um modelo do MySQL Workbench; abri-lo no Workbench não cria nem inicia um servidor. Nenhuma rotina desta conexão executa esse modelo.

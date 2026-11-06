@@ -30,7 +30,7 @@ function limitarTentativas({ maxPorJanela = 10, janelaMs = 60_000 } = {}) {
       return next(new MuitasTentativas('Limite de requisições excedido. Aguarde um minuto.'));
     }
 
-    next();
+    return next();
   };
 }
 

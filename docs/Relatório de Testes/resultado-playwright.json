@@ -1,0 +1,11 @@
+{
+  "resultado": "aprovado",
+  "api": "Node real com repositórios simulados, sem tabelas",
+  "desktop": true,
+  "mobile": true,
+  "offline": true,
+  "administrativo": true,
+  "legado": true,
+  "duplicacoes": 0,
+  "errosJavaScript": []
+}

@@ -4,15 +4,16 @@
  */
 
 export function normalizarCoordenada(valor, tipo = 'lat') {
-  let n = parseFloat(valor);
-  if (!Number.isFinite(n)) return NaN;
+  if (typeof valor !== 'number' && (typeof valor !== 'string' || !valor.trim())) return NaN;
+  const n = typeof valor === 'string' ? Number(valor.trim().replace(',', '.')) : valor;
   const limite = tipo === 'lng' ? 180 : 90;
-  let guard = 0;
-  while (Math.abs(n) > limite && guard < 12) {
-    n = n / 10;
-    guard++;
-  }
-  return n;
+  return Number.isFinite(n) && Math.abs(n) <= limite ? n : NaN;
+}
+
+export function coordenadasValidas(lat, lng) {
+  const latitude = normalizarCoordenada(lat);
+  const longitude = normalizarCoordenada(lng, 'lng');
+  return Number.isFinite(latitude) && Number.isFinite(longitude) && !(latitude === 0 && longitude === 0);
 }
 
 export function chamadoEstaAberto(ticket) {
@@ -29,5 +30,5 @@ export function calcularDistanciaMetros(lat1, lng1, lat2, lng2) {
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+  return R * 2 * Math.atan2(Math.sqrt(Math.min(1, a)), Math.sqrt(Math.max(0, 1 - a)));
 }

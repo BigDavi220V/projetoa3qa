@@ -1,5 +1,5 @@
 // ILUMINA CORURIPE TÉCNICO — Service Worker
-const CACHE_NAME = 'ilumina-tec-v16-camadas-2026-11-04';
+const CACHE_NAME = 'ilumina-tec-v17-rota-admin-2026-11-05';
 const APP_SHELL = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const APP_SHELL = [
   './js/main.js',
   './js/domain/Ticket.js',
   './js/domain/Close.js',
+  './js/domain/AdminClose.js',
   './js/domain/Attempt.js',
   './js/domain/StockItem.js',
   './js/infrastructure/TicketCache.js',
@@ -19,6 +20,8 @@ const APP_SHELL = [
   './js/application/FecharChamado.js',
   './js/application/SincronizarBaixas.js',
   './js/application/CarregarRota.js',
+  './js/application/CarregarPainel.js',
+  './js/application/FecharAdministrativamente.js',
   './js/presentation/ListView.js',
   './js/presentation/MapView.js',
   './js/presentation/CloseFormView.js',

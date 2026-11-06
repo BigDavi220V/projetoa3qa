@@ -2,6 +2,8 @@
 
 > **Conexão MySQL:** a camada de infraestrutura agora permite configurar e testar o acesso ao MySQL local. Veja [Conexão local com MySQL](06-CONEXAO-MYSQL.md). As explicações abaixo sobre SQL e tabelas PostgreSQL descrevem a implementação anterior; a migração dessas consultas e a criação de tabelas não fazem parte desta etapa.
 
+> **Sprint 2:** os [itens 4 — Rota do dia e 6 — Fechamento administrativo](07-SPRINT2-ROTA-E-FECHAMENTO-ADMINISTRATIVO.md) já têm implementação e testes na arquitetura existente. O guia específico explica o fluxo, os testes e o alinhamento de banco ainda necessário.
+
 > **Para quem é este guia?**
 > Se você está começando na programação ou chegando agora no projeto **Ilumina Coruripe**, este documento explica **do zero**, sem jargões complicados, como o sistema funciona, por que organizamos as pastas desse jeito e como acompanhar o caminho de cada funcionalidade no código.
 

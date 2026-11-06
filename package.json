@@ -9,7 +9,7 @@
     "start": "npm run dev",
     "start:server": "node server/src/app.js",
     "db:check": "npm --prefix server run db:check",
-    "test": "node --test server/tests/*.test.js"
+    "test": "node --test"
   },
   "engines": { "node": ">=18" }
 }

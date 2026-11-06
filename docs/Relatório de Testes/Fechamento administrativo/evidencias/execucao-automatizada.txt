@@ -1,0 +1,21 @@
+Comando: node --test server/tests/fechamento-administrativo/cliente.test.js server/tests/fechamento-administrativo/servidor.test.js
+
+✔ Cliente administrativo: valida antes de enviar e exige identificador estável e sessão (1.3819ms)
+✔ Cliente administrativo: usa REST e mantém o UUID ao repetir depois de falha de rede (9.0515ms)
+✔ Cliente administrativo: preserva conflito e acesso negado como falha (1.7895ms)
+✔ Administrativo: exige UUID, informante, justificativa mínima e status permitido (3.1357ms)
+✔ Administrativo: registra gestor, motivo e data, sem movimentar estoque nem salvar foto (18.3569ms)
+✔ Administrativo: dois reenvios simultâneos da mesma operação retornam o mesmo fechamento (0.7206ms)
+✔ Administrativo: outro fechamento concorrente recebe conflito (0.9412ms)
+✔ Administrativo: não reutiliza identificador com dados ou gestor diferentes (1.0814ms)
+✔ Administrativo: chamado inexistente retorna 404 e falha após inserir reverte a transação (0.7792ms)
+✔ API administrativa: parâmetro de rota malformado retorna 400 sem interromper o servidor (111.2079ms)
+✔ API administrativa: autenticação e perfil são aplicados antes da gravação (287.2297ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 983.8823

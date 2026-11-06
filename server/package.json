@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/app.js",
     "db:check": "node scripts/check-db.js",
-    "test": "node --test tests/**/*.test.js"
+    "test": "node --test"
   },
   "dependencies": {
     "dotenv": "^17.2.3",

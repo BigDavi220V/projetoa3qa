@@ -38,17 +38,33 @@ function validarFechamentoCampo(dados = {}) {
 /**
  * Valida os dados obrigatórios para fechamento administrativo pelo gestor.
  */
+const STATUS_ADMINISTRATIVOS = ['Concluído', 'Parcialmente resolvido', 'Ponto não localizado'];
+
+function normalizarFechamentoAdmin(dados = {}) {
+  const texto = valor => typeof valor === 'string' ? valor.trim() : '';
+  return {
+    operacao_id: texto(dados?.operacao_id).toLowerCase(),
+    informante: texto(dados?.informante),
+    justificativa: texto(dados?.justificativa),
+    status: dados?.status === undefined ? 'Concluído' : texto(dados.status)
+  };
+}
+
 function validarFechamentoAdmin(dados = {}) {
   const erros = [];
+  const limpos = normalizarFechamentoAdmin(dados);
 
-  if (!dados.operacao_id || typeof dados.operacao_id !== 'string') {
-    erros.push('Identificador da operação (operacao_id) é obrigatório.');
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(limpos.operacao_id)) {
+    erros.push('Identificador da operação (operacao_id) deve ser um UUID válido.');
   }
-  if (!dados.informante || typeof dados.informante !== 'string' || !dados.informante.trim()) {
-    erros.push('Nome do informante/responsável é obrigatório no fechamento administrativo.');
+  if (!limpos.informante || limpos.informante.length > 120) {
+    erros.push('Nome do informante/responsável é obrigatório e deve ter até 120 caracteres.');
   }
-  if (!dados.justificativa || typeof dados.justificativa !== 'string' || !dados.justificativa.trim()) {
-    erros.push('Justificativa é obrigatória no fechamento administrativo.');
+  if (limpos.justificativa.length < 10) {
+    erros.push('Justificativa deve ter pelo menos 10 caracteres.');
+  }
+  if (!STATUS_ADMINISTRATIVOS.includes(limpos.status)) {
+    erros.push('Status final inválido para fechamento administrativo.');
   }
 
   return {
@@ -59,5 +75,6 @@ function validarFechamentoAdmin(dados = {}) {
 
 module.exports = {
   validarFechamentoCampo,
-  validarFechamentoAdmin
+  validarFechamentoAdmin,
+  normalizarFechamentoAdmin
 };

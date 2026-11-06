@@ -101,11 +101,23 @@ async function fecharChamadoAdmin({ protocolo, gestorId, dados }, deps = {}) {
   }
 
   return emTransacao(async (tx) => {
-    const existente = await FechamentoRepo.buscarPorOperacaoId(tx, dados.operacao_id);
-    if (existente) return existente;
-
+    // A trava vem antes da consulta da operação, inclusive nos reenvios simultâneos.
+    dados = Fechamento.normalizarFechamentoAdmin(dados);
     const chamado = await ChamadoRepo.buscarParaAtualizar(tx, protocolo);
     if (!chamado) throw new NaoEncontrado('Chamado não existe.');
+
+    const existente = await FechamentoRepo.buscarPorOperacaoId(tx, dados.operacao_id);
+    if (existente) {
+      const mesmaOperacao = String(existente.chamado_id) === String(chamado.id)
+        && String(existente.tecnico_id) === String(gestorId)
+        && (existente.administrativo === true || existente.administrativo === 1)
+        && existente.informante === dados.informante
+        && existente.justificativa === dados.justificativa
+        && existente.status === dados.status;
+      if (!mesmaOperacao) throw new Conflito('Identificador da operação já utilizado com outros dados. Reabra o formulário.');
+      return existente;
+    }
+
     if (!Chamado.podeFechar(chamado)) {
       throw new Conflito('Chamado já foi fechado.');
     }
@@ -114,7 +126,7 @@ async function fecharChamadoAdmin({ protocolo, gestorId, dados }, deps = {}) {
       operacaoId: dados.operacao_id,
       chamadoId: chamado.id,
       tecnicoId: gestorId,
-      status: dados.status || 'Resolvido administrativamente',
+      status: dados.status,
       servico: dados.justificativa,
       administrativo: true,
       informante: dados.informante,
