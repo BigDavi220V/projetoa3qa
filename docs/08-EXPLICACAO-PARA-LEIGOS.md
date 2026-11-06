@@ -63,16 +63,14 @@ Cada reporte tem um código único, criado no celular. Se ele chegar de novo, o 
 
 ## O que ainda não está funcionando
 
-> Situação verificada em 05/11/2026. Revise esta seção quando as telas forem ligadas ao novo servidor.
+> Situação verificada em 05/11/2026. A lista completa está em [Problemas e pendências](09-PROBLEMAS-E-PENDENCIAS.md).
 
-A explicação acima descreve a arquitetura planejada, e **as telas ainda não estão ligadas a ela**. É como ter a cozinha nova pronta, mas os garçons ainda levarem os pedidos para o endereço antigo.
+A explicação acima descreve a arquitetura planejada, e **ela ainda está sendo ligada às telas e ao banco de dados**. É como ter a cozinha nova pronta, com só parte dos garçons levando os pedidos para ela.
 
-- **Telas:** os botões ainda usam o código antigo. No app do cidadão, por exemplo, o botão chama a função antiga `submitReport`, em [`public/index.html`](../public/index.html).
-- **Servidor:** ao simular os pedidos que as telas enviam, os dois foram recusados:
-  - O login do técnico deu erro 404, porque o endereço não existe no servidor.
-  - O reporte do cidadão deu erro 400, porque o servidor não entende o formato enviado.
-- **Testes:** os 13 testes automáticos passam, mas verificam as peças separadamente e não cobrem essa ligação entre telas e servidor. Nada foi testado com um banco de dados real.
-- **Site no ar:** segundo o [`README.md`](../README.md), o que está publicado ainda são os dois sites antigos, e o deploy unificado está pendente.
-- **Documentação:** o README ainda diz que o sistema usa Google Apps Script e planilha, enquanto os documentos de arquitetura já falam do servidor novo.
+- **App do cidadão:** ainda usa o código antigo, e o servidor recusa o reporte no formato enviado (erro 400).
+- **App da equipe:** login, lista de chamados, rota do dia e fechamento administrativo já usam o servidor novo. As outras funções ainda não.
+- **Banco de dados:** a equipe adotou o MySQL, mas as tabelas ainda não foram criadas, e parte do servidor ainda usa comandos de outro banco, o PostgreSQL.
+- **Testes:** os 36 testes automáticos passam, mas usam um banco simulado nas gravações. Eles não comprovam o funcionamento com um banco real.
+- **Site no ar:** segundo o [`README.md`](../README.md), o que está publicado ainda são os dois sites antigos.
 
-Em resumo, essa arquitetura está construída em partes, mas ainda não integrada às telas.
+Em resumo, a arquitetura está construída e parcialmente integrada, mas o sistema ainda não funciona de ponta a ponta.
