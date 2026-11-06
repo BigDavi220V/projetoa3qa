@@ -3,6 +3,8 @@
  * Registra as rotas REST da camada de Apresentação e o middleware global de erros.
  */
 
+require('./infrastructure/config/env');
+
 const http = require('node:http');
 const { URL } = require('node:url');
 const registrarRotasChamados = require('./presentation/routes/chamados.routes');
@@ -111,9 +113,16 @@ function criarApp() {
 
     const match = rota.regex.exec(pathname);
     req.params = {};
-    rota.nomesParams.forEach((nome, idx) => {
-      req.params[nome] = decodeURIComponent(match[idx + 1]);
-    });
+    try {
+      rota.nomesParams.forEach((nome, idx) => {
+        req.params[nome] = decodeURIComponent(match[idx + 1]);
+      });
+    } catch (_) {
+      const err = new Error('Parâmetro de rota com codificação inválida.');
+      err.status = 400;
+      err.codigo = 'PARAMETRO_INVALIDO';
+      return tratarErros(err, req, res);
+    }
 
     // Executa cadeia de middlewares -> controller
     let idx = 0;

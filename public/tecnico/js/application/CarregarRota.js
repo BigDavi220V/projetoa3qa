@@ -1,43 +1,55 @@
-/**
- * CAMADA DE APLICAÇÃO (TÉCNICO / GESTOR) — CarregarRota.js
- * Ordena os chamados abertos por vizinho mais próximo (Nearest Neighbor) para planejar a rota do dia.
- */
+/** Planeja paradas de manutenção por proximidade, sem depender de tela ou rede. */
+import { normalizarCoordenada, coordenadasValidas, chamadoEstaAberto, calcularDistanciaMetros } from '../domain/Ticket.js';
 
-import { normalizarCoordenada, chamadoEstaAberto, calcularDistanciaMetros } from '../domain/Ticket.js';
+const RAIO_PARADA_METROS = 80;
 
-export function gerarRotaOtimizada(chamados = [], pontoPartida = { lat: -10.1256, lng: -36.1756 }) {
-  const abertosComGps = chamados
-    .filter(chamadoEstaAberto)
-    .map((c) => ({
-      ...c,
-      latNorm: normalizarCoordenada(c.lat ?? c.latitude, 'lat'),
-      lngNorm: normalizarCoordenada(c.lng ?? c.longitude, 'lng')
-    }))
-    .filter((c) => Number.isFinite(c.latNorm) && Number.isFinite(c.lngNorm));
+export function gerarRotaOtimizada(chamados = [], pontoPartida) {
+  if (!pontoPartida || !coordenadasValidas(pontoPartida.lat, pontoPartida.lng)) {
+    throw new Error('Defina um ponto de partida com localização válida.');
+  }
+  const startLat = normalizarCoordenada(pontoPartida.lat);
+  const startLng = normalizarCoordenada(pontoPartida.lng, 'lng');
+  const elegiveis = chamados.filter(chamadoEstaAberto).map(chamado => ({
+    ...chamado,
+    lat: normalizarCoordenada(chamado.lat ?? chamado.latitude),
+    lng: normalizarCoordenada(chamado.lng ?? chamado.longitude, 'lng')
+  })).filter(chamado => coordenadasValidas(chamado.lat, chamado.lng));
 
-  const restantes = [...abertosComGps];
-  const rota = [];
-  let atual = { lat: pontoPartida.lat, lng: pontoPartida.lng };
+  // Cada grupo usa o primeiro chamado como referência, preservando o raio de 80 m.
+  const grupos = [];
+  const usados = new Set();
+  for (let i = 0; i < elegiveis.length; i++) {
+    if (usados.has(i)) continue;
+    const grupo = [elegiveis[i]];
+    usados.add(i);
+    for (let j = i + 1; j < elegiveis.length; j++) {
+      if (!usados.has(j) && calcularDistanciaMetros(elegiveis[i].lat, elegiveis[i].lng, elegiveis[j].lat, elegiveis[j].lng) <= RAIO_PARADA_METROS) {
+        grupo.push(elegiveis[j]);
+        usados.add(j);
+      }
+    }
+    grupos.push({
+      lat: grupo.reduce((soma, chamado) => soma + chamado.lat, 0) / grupo.length,
+      lng: grupo.reduce((soma, chamado) => soma + chamado.lng, 0) / grupo.length,
+      chamados: grupo
+    });
+  }
 
-  while (restantes.length > 0) {
+  const stops = [];
+  let atual = { lat: startLat, lng: startLng };
+  while (grupos.length) {
     let menorIdx = 0;
     let menorDist = Infinity;
-
-    for (let i = 0; i < restantes.length; i++) {
-      const d = calcularDistanciaMetros(atual.lat, atual.lng, restantes[i].latNorm, restantes[i].lngNorm);
-      if (d < menorDist) {
-        menorDist = d;
+    for (let i = 0; i < grupos.length; i++) {
+      const distancia = calcularDistanciaMetros(atual.lat, atual.lng, grupos[i].lat, grupos[i].lng);
+      if (distancia < menorDist) {
+        menorDist = distancia;
         menorIdx = i;
       }
     }
-
-    const escolhido = restantes.splice(menorIdx, 1)[0];
-    rota.push({
-      ...escolhido,
-      distanciaAnteriorMetros: menorDist
-    });
-    atual = { lat: escolhido.latNorm, lng: escolhido.lngNorm };
+    const parada = grupos.splice(menorIdx, 1)[0];
+    stops.push({ ...parada, distFromPrev: menorDist });
+    atual = parada;
   }
-
-  return rota;
+  return { stops, startLat, startLng, generatedAt: Date.now() };
 }

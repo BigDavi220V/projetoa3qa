@@ -18,7 +18,7 @@ function validar(camposObrigatorios = []) {
         )
       );
     }
-    next();
+    return next();
   };
 }
 

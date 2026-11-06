@@ -6,13 +6,12 @@
 const pool = require('../database/pool');
 
 async function criarSessao({ token, usuarioId, expiraEm }, tx = pool) {
-  const { rows } = await tx.query(
+  await tx.query(
     `INSERT INTO sessoes (token, usuario_id, expira_em)
-     VALUES ($1, $2, $3)
-     RETURNING *`,
-    [token, usuarioId, expiraEm]
+     VALUES (?, ?, ?)`,
+    [token, usuarioId, new Date(expiraEm)]
   );
-  return rows[0];
+  return { token, usuario_id: usuarioId, expira_em: expiraEm };
 }
 
 async function buscarSessaoValida(token, tx = pool) {
@@ -20,7 +19,7 @@ async function buscarSessaoValida(token, tx = pool) {
     `SELECT s.token, s.expira_em, u.id AS usuario_id, u.nome, u.perfil, u.ativo
      FROM sessoes s
      JOIN usuarios u ON u.id = s.usuario_id
-     WHERE s.token = $1 AND s.expira_em > now() AND u.ativo = TRUE`,
+     WHERE s.token = ? AND s.expira_em > now() AND u.ativo = TRUE`,
     [token]
   );
   return rows[0] || null;
@@ -28,12 +27,12 @@ async function buscarSessaoValida(token, tx = pool) {
 
 async function contarFalhasRecentesPorIp(ip, janelaMinutos = 15, tx = pool) {
   const { rows } = await tx.query(
-    `SELECT COUNT(*)::int AS falhas
+    `SELECT COUNT(*) AS falhas
      FROM tentativas_login
-     WHERE ip = $1
+     WHERE ip = ?
        AND sucesso = FALSE
-       AND criado_em > now() - ($2 || ' minutes')::interval`,
-    [ip, String(janelaMinutos)]
+       AND criado_em > now() - INTERVAL ? MINUTE`,
+    [ip, janelaMinutos]
   );
   return rows[0] ? rows[0].falhas : 0;
 }
@@ -41,7 +40,7 @@ async function contarFalhasRecentesPorIp(ip, janelaMinutos = 15, tx = pool) {
 async function registrarTentativaLogin({ ip, perfil, sucesso }, tx = pool) {
   await tx.query(
     `INSERT INTO tentativas_login (ip, perfil, sucesso)
-     VALUES ($1, $2, $3)`,
+     VALUES (?, ?, ?)`,
     [ip || '0.0.0.0', perfil || null, Boolean(sucesso)]
   );
 }

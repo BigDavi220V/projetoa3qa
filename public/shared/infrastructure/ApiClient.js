@@ -39,9 +39,9 @@ export async function api(caminho, { method = 'GET', body, token, timeout = 3000
     }
 
     return {
+      ...json,
       status: resp.status,
-      ok: resp.ok && (json.success !== false && json.ok !== false),
-      ...json
+      ok: resp.ok && (json.success !== false && json.ok !== false)
     };
   } finally {
     clearTimeout(timer);

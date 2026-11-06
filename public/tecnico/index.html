@@ -833,6 +833,8 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
   color: var(--ink-3); font-size: 13px;
   margin-top: 6px;
 }
+#adm-modal { margin:auto; }
+#adm-modal::backdrop { background:rgba(15,20,32,.6); backdrop-filter:blur(2px); }
 </style>
 </head>
 <body class="pin-active">
@@ -1084,7 +1086,7 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
         <div class="card-ico" style="background:linear-gradient(135deg,#F39427,#E85D3F);color:#fff">🗺️</div>
         <div>
           <div class="card-title">Planejar rota do dia</div>
-          <div class="card-sub">Sequência otimizada pelos chamados em aberto</div>
+          <div class="card-sub">Sequência por proximidade dos chamados em aberto</div>
         </div>
       </div>
       <button class="btn btn-rainbow" style="margin-top:12px" onclick="gerarRota()">
@@ -1173,7 +1175,7 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
       </div>
       <div style="font-size:12px;color:var(--ink-2);line-height:1.5;margin:4px 0 12px 0">
         Fecha o chamado apenas com justificativa, sem foto, GPS ou configuração do poste.
-        Fica marcado na planilha como <b>administrativo</b> para não se confundir com uma OS vistoriada.
+        Fica registrado como <b>administrativo</b> para não se confundir com uma OS vistoriada.
       </div>
       <button class="btn" style="background:linear-gradient(95deg,#E85D3F,#C03A21);color:#fff" onclick="abrirFechamentoAdm()">
         <span>📝 Fechar chamado administrativamente</span>
@@ -1184,35 +1186,35 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
 </div>
 
 <!-- ════ MODAL FECHAMENTO ADMINISTRATIVO ════ -->
-<div id="adm-modal" style="display:none;position:fixed;inset:0;z-index:2400;background:rgba(15,20,32,0.6);backdrop-filter:blur(2px);align-items:center;justify-content:center;padding:18px;overflow-y:auto">
-  <div style="background:var(--surface);border-radius:16px;max-width:460px;width:100%;padding:22px;box-shadow:var(--shadow-lg);max-height:92vh;overflow-y:auto">
+<dialog id="adm-modal" aria-labelledby="adm-title" aria-describedby="adm-description" style="border:0;padding:0;border-radius:16px;width:calc(100% - 36px);max-width:460px;max-height:92vh;background:var(--surface);color:var(--ink);box-shadow:var(--shadow-lg)">
+  <form id="adm-form" onsubmit="event.preventDefault(); enviarFechamentoAdm()" style="padding:22px">
     <div style="font-size:30px;text-align:center;margin-bottom:2px">📝</div>
-    <div style="font-family:var(--font-display);font-size:18px;font-weight:800;text-align:center;margin-bottom:4px">Fechamento administrativo</div>
-    <div style="font-size:12px;color:var(--ink-2);text-align:center;line-height:1.45;margin-bottom:16px">Sem foto, GPS ou configuração. Use quando a equipe da prefeitura executou o serviço fora do sistema.</div>
+    <h2 id="adm-title" style="font-family:var(--font-display);font-size:18px;font-weight:800;text-align:center;margin:0 0 4px">Fechamento administrativo</h2>
+    <div id="adm-description" style="font-size:12px;color:var(--ink-2);text-align:center;line-height:1.45;margin-bottom:16px">Sem foto, GPS ou configuração. Use quando a equipe da prefeitura executou o serviço fora do sistema.</div>
 
-    <label style="font-size:12px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:5px">Chamado <span style="color:var(--brand-red)">*</span></label>
-    <select class="input" id="adm-chamado" style="margin-bottom:12px"><option value="">Carregando…</option></select>
+    <label for="adm-chamado" style="font-size:12px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:5px">Chamado <span style="color:var(--brand-red)">*</span></label>
+    <select class="input" id="adm-chamado" required style="margin-bottom:12px"><option value="">Carregando…</option></select>
 
-    <label style="font-size:12px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:5px">Informado por <span style="color:var(--brand-red)">*</span></label>
-    <input type="text" id="adm-informante" class="input" placeholder="Nome de quem informou o serviço" style="margin-bottom:12px"/>
+    <label for="adm-informante" style="font-size:12px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:5px">Informado por <span style="color:var(--brand-red)">*</span></label>
+    <input type="text" id="adm-informante" required maxlength="120" class="input" placeholder="Nome de quem informou o serviço" style="margin-bottom:12px"/>
 
-    <label style="font-size:12px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:5px">Status final</label>
+    <label for="adm-status" style="font-size:12px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:5px">Status final</label>
     <select class="input" id="adm-status" style="margin-bottom:12px">
       <option value="Concluído">Concluído</option>
       <option value="Parcialmente resolvido">Parcialmente resolvido</option>
       <option value="Ponto não localizado">Ponto não localizado</option>
     </select>
 
-    <label style="font-size:12px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:5px">Justificativa <span style="color:var(--brand-red)">*</span></label>
-    <textarea id="adm-justificativa" class="input" style="min-height:90px" placeholder="Ex.: equipe da Secretaria executou a troca da lâmpada em 05/08, informado por telefone. Sem registro fotográfico."></textarea>
-    <div style="font-size:11px;color:var(--ink-3);margin-top:4px">Mínimo de 10 caracteres. Fica registrado na planilha e no e-mail.</div>
+    <label for="adm-justificativa" style="font-size:12px;font-weight:700;color:var(--ink-2);display:block;margin-bottom:5px">Justificativa <span style="color:var(--brand-red)">*</span></label>
+    <textarea id="adm-justificativa" required minlength="10" class="input" style="min-height:90px" placeholder="Ex.: equipe da Secretaria executou a troca da lâmpada em 05/08, informado por telefone. Sem registro fotográfico."></textarea>
+    <div style="font-size:11px;color:var(--ink-3);margin-top:4px">Mínimo de 10 caracteres. O responsável e a justificativa ficam no registro do fechamento.</div>
 
     <div style="display:flex;gap:8px;margin-top:16px">
-      <button onclick="fecharFechamentoAdm()" style="flex:1;padding:13px;border-radius:11px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;font-size:13.5px">Cancelar</button>
-      <button onclick="enviarFechamentoAdm()" id="adm-submit-btn" style="flex:1.4;padding:13px;border-radius:11px;border:none;background:linear-gradient(95deg,#E85D3F,#C03A21);color:#fff;font-weight:700;font-size:13.5px">Confirmar fechamento</button>
+      <button type="button" id="adm-cancel-btn" onclick="fecharFechamentoAdm()" style="flex:1;padding:13px;border-radius:11px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;font-size:13.5px">Cancelar</button>
+      <button type="submit" id="adm-submit-btn" style="flex:1.4;padding:13px;border-radius:11px;border:none;background:linear-gradient(95deg,#E85D3F,#C03A21);color:#fff;font-weight:700;font-size:13.5px">Confirmar fechamento</button>
     </div>
-  </div>
-</div>
+  </form>
+</dialog>
 
 <!-- ════ ROUTE SCREEN ════ -->
 <div class="screen" id="screen-route">
@@ -1469,7 +1471,7 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
 </div>
 
 <!-- Toast -->
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 
 <!-- Botão fullscreen flutuante (somente PC) -->
 <button id="fs-btn" onclick="toggleFullscreen()" title="Tela cheia" aria-label="Tela cheia">
@@ -1573,7 +1575,12 @@ textarea.input { resize: vertical; min-height: 84px; line-height: 1.5; font-fami
    CONFIG — trocar após deploy do Apps Script
    ══════════════════════════════════════════════ */
 const SHEETS_URL = window.ILUMINA.ENDPOINT_TECNICO;
+const USA_API_NODE = Boolean(window.ILUMINA.API_URL) || SHEETS_URL === '/api';
 const TECNICO_DEFAULT = '';
+
+async function controladoresTecnicos() {
+  return (await import('./js/main.js')).controllers;
+}
 
 /* ── STATE ── */
 let pinBuffer    = '';
@@ -1586,6 +1593,7 @@ let posteForcaNovo = false; // Etapa 2: técnico marcou "é poste novo"
 let theMap       = null;
 let theMarker    = null;
 let sessionToken = null;
+let sessionUser = null;
 let sessionExpiry= 0;
 let pinChecking  = false;
 let callsIndex   = {};
@@ -1864,12 +1872,14 @@ async function checkPin() {
   pinChecking = true;
   document.getElementById('pin-error').textContent = 'Validando…';
   try {
-    const data = await apiFetchTO({ action: 'login', pin: pinBuffer }, 12000);
+    const sessao = USA_API_NODE ? await (await controladoresTecnicos()).autenticar(pinBuffer) : null;
+    const data = USA_API_NODE ? { success: true, ...sessao } : await apiFetchTO({ action: 'login', pin: pinBuffer }, 12000);
     if (data && data.success) {
       sessionToken = data.token;
       sessionExpiry = data.expiry;
+      sessionUser = data.usuario || null;
       try {
-        localStorage.setItem('ilu_tech_session', JSON.stringify({ token: sessionToken, expiry: sessionExpiry }));
+        localStorage.setItem('ilu_tech_session', JSON.stringify({ token: sessionToken, expiry: sessionExpiry, usuario: sessionUser, apiNode: USA_API_NODE }));
       } catch(_) {}
       document.getElementById('pin-error').textContent = '';
       showScreen('home');
@@ -1881,7 +1891,7 @@ async function checkPin() {
       setTimeout(() => { pinBuffer = ''; updateDots(); }, 900);
     }
   } catch(e) {
-    document.getElementById('pin-error').textContent = 'Sem conexão. Verifique a internet.';
+    document.getElementById('pin-error').textContent = e.status ? e.message : 'Sem conexão. Verifique a internet.';
     setTimeout(() => { pinBuffer = ''; updateDots(); }, 900);
   } finally {
     pinChecking = false;
@@ -2057,7 +2067,9 @@ async function carregarChamados() {
   try {
     // escopo 'abertos' = payload enxuto (backend v14). A home só mostra abertos;
     // os totais vêm calculados do servidor, sem trafegar os fechados.
-    const data = await apiFetch({ action: 'list', token: sessionToken, escopo: 'abertos' });
+    const data = USA_API_NODE
+      ? await (await controladoresTecnicos()).carregarChamados(sessionToken)
+      : await apiFetch({ action: 'list', token: sessionToken, escopo: 'abertos' });
     if (data && data.error === 'sessao_expirada') {
       limparSessao();
       showScreen('pin');
@@ -2091,6 +2103,12 @@ async function carregarChamados() {
 
     renderListaFromRecords(data.records, /* cached= */ false);
   } catch(e) {
+    if (e.status === 401) {
+      limparSessao();
+      showScreen('pin');
+      showToast('Sessão expirada. Digite o PIN novamente.', 'err');
+      return;
+    }
     // Falhou online — cai pro cache
     renderCachedList();
   }
@@ -2278,23 +2296,10 @@ async function buscarProtocolo() {
 
 let currentRoute = null; // { stops: [...], startLat, startLng, generatedAt }
 
-const ROUTE_RADIUS_M = 80;       // raio pra agrupar chamados em uma mesma parada
-const ROUTE_MAX_WAYPOINTS = 23;  // limite do Google Maps em waypoints (incluindo destino)
-
-function distanciaMetros(lat1, lng1, lat2, lng2) {
-  // Haversine
-  const R = 6371000;
-  const toRad = d => d * Math.PI / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
-  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng/2)**2;
-  return 2 * R * Math.asin(Math.sqrt(a));
-}
-
 function coordsValidas(lat, lng) {
-  const la = parseFloat(lat), ln = parseFloat(lng);
-  if (!isFinite(la) || !isFinite(ln)) return false;
-  if (Math.abs(la) < 0.0001 && Math.abs(ln) < 0.0001) return false;
+  const dominio = window.IluminaTecnico.domain.Ticket;
+  const la = dominio.normalizarCoordenada(lat), ln = dominio.normalizarCoordenada(lng, 'lng');
+  if (!dominio.coordenadasValidas(la, ln)) return false;
   if (la < -20 || la > -2) return false;
   if (ln < -50 || ln > -33) return false;
   return true;
@@ -2341,10 +2346,19 @@ async function obterPartidaRota() {
     : 'Não foi possível obter o GPS deste dispositivo (comum em PC).';
   const usar = confirm(msg + '\n\nDeseja montar o roteiro partindo do primeiro chamado da lista?\n\nOK = sim, monta assim\nCancelar = não montar');
   if (!usar) return null;
-  return { lat: parseFloat(comGps[0].lat), lng: parseFloat(comGps[0].lng), acc: 0, manual: true };
+  const dominio = window.IluminaTecnico.domain.Ticket;
+  return { lat: dominio.normalizarCoordenada(comGps[0].lat), lng: dominio.normalizarCoordenada(comGps[0].lng, 'lng'), acc: 0, manual: true };
 }
 
 async function gerarRota() {
+  const controladores = await controladoresTecnicos();
+  const chamados = Object.values(callsIndex).filter(c =>
+    c.status === 'Aguardando atendimento' && coordsValidas(c.lat, c.lng)
+  );
+  if (!chamados.length) {
+    showToast('Nenhum chamado aberto com GPS válido para rotear.', 'err');
+    return;
+  }
   showToast('Calculando rota…', 'ok');
 
   // 1) Posição inicial (GPS atual, ou partida alternativa se o GPS falhar — típico em PC)
@@ -2355,63 +2369,7 @@ async function gerarRota() {
   }
   if (inicio.manual) showToast('Roteiro montado a partir do primeiro chamado (sem GPS do dispositivo).', 'ok');
 
-  // 2) Filtra chamados elegíveis (abertos + GPS válido)
-  const chamados = Object.values(callsIndex).filter(c =>
-    c.status === 'Aguardando atendimento' && coordsValidas(c.lat, c.lng)
-  );
-
-  if (chamados.length === 0) {
-    showToast('Nenhum chamado aberto com GPS válido para rotear.', 'err');
-    return;
-  }
-
-  // 3) Agrupa em paradas (chamados próximos = mesma parada)
-  const paradas = [];
-  const usados = new Set();
-  for (let i = 0; i < chamados.length; i++) {
-    if (usados.has(i)) continue;
-    const grupo = [chamados[i]];
-    usados.add(i);
-    for (let j = i + 1; j < chamados.length; j++) {
-      if (usados.has(j)) continue;
-      const d = distanciaMetros(
-        parseFloat(chamados[i].lat), parseFloat(chamados[i].lng),
-        parseFloat(chamados[j].lat), parseFloat(chamados[j].lng)
-      );
-      if (d <= ROUTE_RADIUS_M) { grupo.push(chamados[j]); usados.add(j); }
-    }
-    // Centroide da parada
-    const sumLat = grupo.reduce((s, c) => s + parseFloat(c.lat), 0);
-    const sumLng = grupo.reduce((s, c) => s + parseFloat(c.lng), 0);
-    paradas.push({
-      lat: sumLat / grupo.length,
-      lng: sumLng / grupo.length,
-      chamados: grupo
-    });
-  }
-
-  // 4) Ordena por próximo-vizinho a partir do GPS atual
-  const ordenado = [];
-  let cursorLat = inicio.lat, cursorLng = inicio.lng;
-  const restante = [...paradas];
-  while (restante.length > 0) {
-    let menorDist = Infinity, menorIdx = 0;
-    for (let i = 0; i < restante.length; i++) {
-      const d = distanciaMetros(cursorLat, cursorLng, restante[i].lat, restante[i].lng);
-      if (d < menorDist) { menorDist = d; menorIdx = i; }
-    }
-    const escolhido = restante.splice(menorIdx, 1)[0];
-    escolhido.distFromPrev = menorDist;
-    ordenado.push(escolhido);
-    cursorLat = escolhido.lat; cursorLng = escolhido.lng;
-  }
-
-  currentRoute = {
-    stops: ordenado,
-    startLat: inicio.lat,
-    startLng: inicio.lng,
-    generatedAt: Date.now()
-  };
+  currentRoute = controladores.calcularRotaDoDia(chamados, inicio);
 
   renderRota();
   showScreen('route');
@@ -2440,17 +2398,32 @@ function renderRota() {
         </div>
         <div>
           <div style="font-size:24px;font-weight:800">${distKm}<span style="font-size:14px"> km</span></div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px">Trajeto</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px">Distância estimada</div>
         </div>
       </div>
       <div style="font-size:11px;color:rgba(255,255,255,0.45);text-align:center;margin-top:12px">Gerado em ${dataFmt}</div>
     </div>
   `;
 
+  const linksMaps = window.IluminaTecnico.presentation.mapView.criarLinksDaRota(r);
+  if (linksMaps.length > 1) {
+    const navegacao = document.createElement('nav');
+    navegacao.setAttribute('aria-label', 'Trechos da rota no Google Maps');
+    navegacao.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px';
+    linksMaps.forEach((url, indice) => {
+      const link = document.createElement('a');
+      link.href = url; link.target = '_blank'; link.rel = 'noopener';
+      link.className = 'btn btn-navy'; link.style.width = 'auto';
+      link.textContent = `Trecho ${indice + 1} de ${linksMaps.length}`;
+      navegacao.appendChild(link);
+    });
+    document.getElementById('route-summary').appendChild(navegacao);
+  }
+
   const html = r.stops.map((p, i) => {
     const num = i + 1;
     const distInfo = i === 0
-      ? `${Math.round(p.distFromPrev)}m do GPS atual`
+      ? `${Math.round(p.distFromPrev)}m do ponto de partida`
       : `${Math.round(p.distFromPrev)}m da parada anterior`;
     const mapsUrl = `https://www.google.com/maps?q=${p.lat},${p.lng}`;
     const chamadosHtml = p.chamados.map((c, j) => `
@@ -2498,22 +2471,9 @@ function abrirRotaCompleta() {
   const r = currentRoute;
   if (!r || r.stops.length === 0) return;
 
-  const origem = `${r.startLat},${r.startLng}`;
-
-  // Maps tem limite de waypoints (~23 incluindo destino)
-  // Se exceder, divide em múltiplos links
-  const stops = r.stops.slice(0, ROUTE_MAX_WAYPOINTS);
-  const destino = `${stops[stops.length - 1].lat},${stops[stops.length - 1].lng}`;
-  const waypoints = stops.slice(0, -1).map(s => `${s.lat},${s.lng}`).join('|');
-
-  let url = `https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}&travelmode=driving`;
-  if (waypoints) url += `&waypoints=${encodeURIComponent(waypoints)}`;
-
-  if (r.stops.length > ROUTE_MAX_WAYPOINTS) {
-    showToast(`Maps abre só as primeiras ${ROUTE_MAX_WAYPOINTS} paradas. Restantes ficam pra próxima rota.`, 'ok');
-  }
-
-  window.open(url, '_blank');
+  const links = window.IluminaTecnico.presentation.mapView.criarLinksDaRota(r);
+  if (links.length > 1) showToast(`Rota dividida em ${links.length} trechos. Abra os demais pelos links acima.`, 'ok');
+  window.open(links[0], '_blank', 'noopener');
 }
 
 /* ══ EXPORTAR ROTA EM PDF (via Web Share / impressão) ═══
@@ -2530,7 +2490,7 @@ async function exportarPdfRota() {
 
   const linhasHtml = r.stops.map((p, i) => {
     const distInfo = i === 0
-      ? `${Math.round(p.distFromPrev)}m do GPS`
+      ? `${Math.round(p.distFromPrev)}m do ponto de partida`
       : `${Math.round(p.distFromPrev)}m da anterior`;
     const head = `
       <tr style="background:#0F1420;color:#fff">
@@ -2550,11 +2510,8 @@ async function exportarPdfRota() {
     return head + itens;
   }).join('');
 
-  const origem = `${r.startLat},${r.startLng}`;
-  const stops = r.stops.slice(0, ROUTE_MAX_WAYPOINTS);
-  const destino = `${stops[stops.length - 1].lat},${stops[stops.length - 1].lng}`;
-  const waypoints = stops.slice(0, -1).map(s => `${s.lat},${s.lng}`).join('|');
-  const rotaUrl = `https://www.google.com/maps/dir/?api=1&origin=${origem}&destination=${destino}&travelmode=driving${waypoints ? '&waypoints=' + encodeURIComponent(waypoints) : ''}`;
+  const linksMaps = window.IluminaTecnico.presentation.mapView.criarLinksDaRota(r);
+  const linksRotaHtml = linksMaps.map((url, indice) => `<a class="btn-rota" href="${escapeAttr(url)}" target="_blank" rel="noopener">🗺️ Abrir trecho ${indice + 1} de ${linksMaps.length} no Maps</a>`).join(' ');
 
   const html = `<!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="UTF-8"><title>Roteiro — Ilumina Coruripe</title>
@@ -2583,7 +2540,7 @@ async function exportarPdfRota() {
   <div class="actions">
     <button class="btn-print" onclick="__imprimir()">🖨️ Imprimir / Salvar PDF</button>
     <button class="btn-print" id="__btn-share" style="display:none;background:#0A6E3E" onclick="__compartilhar()">📤 Salvar / Enviar PDF</button>
-    <a class="btn-rota" href="${rotaUrl}" target="_blank">🗺️ Abrir rota no Maps</a>
+    ${linksRotaHtml}
   </div>
 
   <div class="stats">
@@ -2666,8 +2623,12 @@ async function exportarPdfRota() {
 /* ══ FECHAMENTO ADMINISTRATIVO (Ambiente Gestor) ═════════
    Fecha chamado sem foto/GPS/config — só justificativa.
    Usado quando a equipe da prefeitura executa fora do app.   */
-function abrirFechamentoAdm() {
+let fechamentoAdmOperacao = null;
+
+async function abrirFechamentoAdm() {
   if (!sessionToken) return showToast('Sessão expirada. Faça login.', 'err');
+  if (USA_API_NODE && sessionUser?.perfil !== 'gestor') return showToast('Somente o gestor pode fechar administrativamente.', 'err');
+  fechamentoAdmOperacao = (await controladoresTecnicos()).iniciarFechamentoAdministrativo();
   const sel = document.getElementById('adm-chamado');
   const abertos = Object.values(callsIndex)
     .filter(c => c.status === 'Aguardando atendimento');
@@ -2685,14 +2646,21 @@ function abrirFechamentoAdm() {
   document.getElementById('adm-informante').value = '';
   document.getElementById('adm-justificativa').value = '';
   document.getElementById('adm-status').value = 'Concluído';
-  document.getElementById('adm-modal').style.display = 'flex';
+  document.getElementById('adm-submit-btn').disabled = !abertos.length;
+  document.getElementById('adm-modal').showModal();
 }
 
 function fecharFechamentoAdm() {
-  document.getElementById('adm-modal').style.display = 'none';
+  document.getElementById('adm-modal').close();
 }
 
+document.getElementById('adm-modal').addEventListener('cancel', event => {
+  if (document.getElementById('adm-form').getAttribute('aria-busy') === 'true') event.preventDefault();
+});
+
 async function enviarFechamentoAdm() {
+  const btn = document.getElementById('adm-submit-btn');
+  if (btn.disabled || !document.getElementById('adm-form').reportValidity()) return;
   const protocolo = document.getElementById('adm-chamado').value;
   const informante = (document.getElementById('adm-informante').value || '').trim();
   const justificativa = (document.getElementById('adm-justificativa').value || '').trim();
@@ -2706,19 +2674,26 @@ async function enviarFechamentoAdm() {
                'Ele será registrado SEM foto, GPS ou configuração do poste, ' +
                'e ficará marcado como fechamento administrativo.')) return;
 
-  const btn = document.getElementById('adm-submit-btn');
+  const campos = document.getElementById('adm-form').querySelectorAll('input, select, textarea, button');
+  document.getElementById('adm-form').setAttribute('aria-busy', 'true');
+  campos.forEach(campo => { campo.disabled = true; });
   btn.disabled = true; btn.textContent = 'Registrando…';
   try {
-    const data = await apiFetchTO({
+    const resultado = USA_API_NODE ? await (await controladoresTecnicos()).fecharAdministrativamente({
+      operacao_id: fechamentoAdmOperacao, protocolo, informante, justificativa, status
+    }, sessionToken) : null;
+    const data = USA_API_NODE ? { success: resultado.sucesso, error: resultado.mensagem, status: resultado.status } : await apiFetchTO({
       action: 'close_admin', token: sessionToken,
       protocolo, informante, justificativa, status
     }, 40000);
 
     if (!data || !data.success) {
       const err = data && data.error || '';
-      if (err === 'ja_fechado') showToast('Este chamado já está fechado (' + (data.status_atual || '') + ').', 'err');
+      if (data?.status === 409) { showToast(err, 'err'); fecharFechamentoAdm(); carregarChamados(); }
+      else if (data?.status === 403) showToast('Somente o gestor pode fechar administrativamente.', 'err');
+      else if (err === 'ja_fechado') showToast('Este chamado já está fechado (' + (data.status_atual || '') + ').', 'err');
       else if (err === 'justificativa_curta') showToast('Justificativa muito curta.', 'err');
-      else if (err === 'sessao_expirada') {
+      else if (err === 'sessao_expirada' || data?.status === 401) {
         showToast('Sessão expirada. Digite o PIN.', 'err');
         setTimeout(() => { limparSessao(); showScreen('pin'); }, 1500);
       }
@@ -2731,8 +2706,11 @@ async function enviarFechamentoAdm() {
     btn.disabled = false; btn.textContent = 'Confirmar fechamento';
     carregarChamados();
   } catch (e) {
-    showToast('Sem conexão. Tente em área com sinal.', 'err');
-    btn.disabled = false; btn.textContent = 'Confirmar fechamento';
+    showToast('Não foi possível confirmar. Os dados continuam neste formulário; tente novamente.', 'err');
+  } finally {
+    document.getElementById('adm-form').setAttribute('aria-busy', 'false');
+    campos.forEach(campo => { campo.disabled = false; });
+    btn.textContent = 'Confirmar fechamento';
   }
 }
 
@@ -4104,7 +4082,7 @@ async function mostrarSucessoOffline() {
 }
 
 function limparSessao() {
-  sessionToken = null; sessionExpiry = 0;
+  sessionToken = null; sessionExpiry = 0; sessionUser = null;
   try { localStorage.removeItem('ilu_tech_session'); } catch(_) {}
 }
 
@@ -4140,12 +4118,14 @@ function restaurarSessao() {
     if (!raw) return false;
     const s = JSON.parse(raw);
     if (!s || !s.token || !s.expiry) return false;
+    if (Boolean(s.apiNode) !== USA_API_NODE || (USA_API_NODE && !s.usuario)) return false;
     if (Date.now() >= Number(s.expiry)) {
       localStorage.removeItem('ilu_tech_session');
       return false;
     }
     sessionToken = s.token;
     sessionExpiry = Number(s.expiry);
+    sessionUser = s.usuario || null;
     return true;
   } catch(_) { return false; }
 }

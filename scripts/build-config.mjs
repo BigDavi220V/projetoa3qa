@@ -42,8 +42,8 @@ if (faltando.length) {
 
 const cfg = {
   API_URL: process.env.ILUMINA_API_URL || '',
-  ENDPOINT_CIDADAO: process.env.ILUMINA_ENDPOINT_CIDADAO || '/api/chamados',
-  ENDPOINT_TECNICO: process.env.ILUMINA_ENDPOINT_TECNICO || '/api',
+  ENDPOINT_CIDADAO: temApiUrl ? '/api/chamados' : process.env.ILUMINA_ENDPOINT_CIDADAO,
+  ENDPOINT_TECNICO: temApiUrl ? '/api' : process.env.ILUMINA_ENDPOINT_TECNICO,
   HUB_URL: process.env.ILUMINA_HUB_URL || 'https://hubcentralcrp.netlify.app'
 };
 

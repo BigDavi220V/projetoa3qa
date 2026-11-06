@@ -1,5 +1,7 @@
 # Arquitetura Oficial — Ilumina Coruripe
 
+> **Estado atual:** o pool usa MySQL e os [itens 4 e 6 da Sprint 2](07-SPRINT2-ROTA-E-FECHAMENTO-ADMINISTRATIVO.md) reutilizam as camadas, com integração da tela à API e testes específicos. O esquema definitivo ainda precisa de alinhamento e preparação; nenhuma tabela foi criada. Parte das consultas e os exemplos PostgreSQL abaixo pertencem à implementação anterior. Consulte também [Conexão local com MySQL](06-CONEXAO-MYSQL.md).
+
 > **Novo no projeto?** Comece pelo [**Guia de Desenvolvimento para Iniciantes (`docs/05-GUIA-PARA-INICIANTES.md`)**](05-GUIA-PARA-INICIANTES.md), que explica passo a passo como o sistema funciona com exemplos práticos.
 >
 > **Série detalhada de referência:**

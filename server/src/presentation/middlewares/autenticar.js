@@ -27,9 +27,9 @@ function autenticar(perfisAceitos = ['tecnico', 'gestor']) {
       }
 
       req.usuario = usuario;
-      next();
+      return next();
     } catch (err) {
-      next(err);
+      return next(err);
     }
   };
 }

@@ -10,6 +10,22 @@ export class MapView {
     this.marker = null;
   }
 
+  criarLinksDaRota(rota) {
+    const links = [];
+    let origem = `${rota.startLat},${rota.startLng}`;
+    // URLs do Maps aceitam até três pontos intermediários no navegador móvel.
+    for (let i = 0; i < rota.stops.length; i += 4) {
+      const trecho = rota.stops.slice(i, i + 4);
+      const destino = trecho[trecho.length - 1];
+      const coordenadaDestino = `${destino.lat},${destino.lng}`;
+      const parametros = new URLSearchParams({ api: '1', origin: origem, destination: coordenadaDestino, travelmode: 'driving' });
+      if (trecho.length > 1) parametros.set('waypoints', trecho.slice(0, -1).map(parada => `${parada.lat},${parada.lng}`).join('|'));
+      links.push(`https://www.google.com/maps/dir/?${parametros}`);
+      origem = coordenadaDestino;
+    }
+    return links;
+  }
+
   renderizarPonto(containerId, lat, lng, titulo = '') {
     if (!this.L || !Number.isFinite(lat) || !Number.isFinite(lng)) return;
     if (!this.map) {

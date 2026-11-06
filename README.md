@@ -52,6 +52,14 @@ netlify.toml            publish=public, redirects, headers de cache
 docs/ARQUITETURA.md     fluxo de dados e contrato da API
 ```
 
+## Conexão MySQL local
+
+A conexão da API Node.js com MySQL está configurada na camada de infraestrutura. Instale as dependências com `npm install --prefix server`, preencha `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` e `DB_PASSWORD` no `.env` e rode `npm run db:check`.
+
+O comando verifica somente o acesso ao banco, sem criar tabelas. Os itens **4 — Rota do dia** e **6 — Fechamento administrativo** foram ligados à arquitetura em camadas e à API Node, com testes específicos. A persistência real ainda depende de preparar e alinhar o esquema MySQL do grupo; nenhuma tabela foi criada. Consulte o [guia dos itens 4 e 6](docs/07-SPRINT2-ROTA-E-FECHAMENTO-ADMINISTRATIVO.md) e o [guia de conexão](docs/06-CONEXAO-MYSQL.md).
+
+Os [relatórios de testes de Orlando Henrique](<docs/Relatório de Testes/README.md>) estão organizados por funcionalidade, com cenários, resultados e evidências de execução.
+
 ## Variáveis de ambiente
 
 Os endpoints do Apps Script saíram do código e viraram variáveis:
